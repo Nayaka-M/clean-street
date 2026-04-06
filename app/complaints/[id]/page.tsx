@@ -31,7 +31,6 @@ export default async function ComplaintDetail({ params }: { params: { id: string
           <img src={complaint.photo} alt="issue" className="mt-8 rounded-2xl w-full" />
         )}
 
-        {/* Voting */}
         <div className="flex gap-10 mt-10">
           <form action={async () => {
             'use server';
@@ -54,7 +53,6 @@ export default async function ComplaintDetail({ params }: { params: { id: string
           </form>
         </div>
 
-        {/* Comments */}
         <div className="mt-12">
           <h3 className="font-semibold text-lg flex items-center gap-2">
             <MessageCircle className="w-5 h-5" />
