@@ -7,7 +7,7 @@ export default async function ProfilePage() {
   if (!user) redirect('/login');
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
+    <div className="max-w-4xl mx-auto px-6 py-8">
       <h1 className="text-3xl font-bold mb-8">Profile</h1>
       <div className="grid grid-cols-2 gap-8">
         <div className="bg-white rounded-3xl p-8 text-center">
@@ -16,7 +16,7 @@ export default async function ProfilePage() {
           </div>
           <h2 className="font-semibold text-2xl">{user.name}</h2>
           <p className="text-blue-600">@{user.username || 'user'}</p>
-          <p className="text-sm text-gray-500 mt-6">Active citizen helping to improve our community through CleanStreet</p>
+          <p className="text-sm text-gray-500 mt-6">Active citizen helping to improve our community</p>
         </div>
 
         <div className="bg-white rounded-3xl p-8">

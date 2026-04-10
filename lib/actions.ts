@@ -3,8 +3,9 @@
 import { cookies } from 'next/headers'
 import { prisma } from './prisma'
 import { hashPassword, verifyPassword, signToken, getCurrentUser } from './auth'
+import { revalidatePath } from 'next/cache'
 
-// ====================== AUTH ACTIONS ======================
+// ====================== AUTH ======================
 export async function loginAction(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -60,7 +61,7 @@ export async function logoutAction() {
 // ====================== COMPLAINT ACTIONS ======================
 export async function createComplaintAction(formData: FormData) {
   const user = await getCurrentUser()
-  if (!user) throw new Error('You must be logged in to report an issue')
+  if (!user) throw new Error('You must be logged in')
 
   const title = formData.get('title') as string
   const description = formData.get('description') as string
@@ -85,7 +86,7 @@ export async function createComplaintAction(formData: FormData) {
 
 export async function voteAction(complaintId: string, voteType: 'UPVOTE' | 'DOWNVOTE') {
   const user = await getCurrentUser()
-  if (!user) throw new Error('You must be logged in to vote')
+  if (!user) throw new Error('You must be logged in')
 
   await prisma.vote.create({
     data: { userId: user.id, complaintId, voteType }
@@ -95,7 +96,7 @@ export async function voteAction(complaintId: string, voteType: 'UPVOTE' | 'DOWN
 
 export async function addCommentAction(complaintId: string, content: string) {
   const user = await getCurrentUser()
-  if (!user) throw new Error('You must be logged in to comment')
+  if (!user) throw new Error('You must be logged in')
 
   await prisma.comment.create({
     data: { userId: user.id, complaintId, content }
@@ -108,5 +109,11 @@ export async function updateStatusAction(complaintId: string, newStatus: 'IN_REV
     where: { id: complaintId },
     data: { status: newStatus }
   })
+
+  revalidatePath('/admin')
+  revalidatePath('/dashboard')
+  revalidatePath('/complaints')
+  revalidatePath('/')
+
   return { success: true }
 }

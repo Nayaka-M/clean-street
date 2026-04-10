@@ -3,14 +3,18 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { AlertTriangle, Clock, Target, CheckCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';   // ← This forces fresh data
+
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
 
+  const whereClause = user.role === 'ADMIN' ? {} : { userId: user.id };
+
   const complaints = await prisma.complaint.findMany({
-    where: { userId: user.id },
+    where: whereClause,
+    include: { user: true },
     orderBy: { createdAt: 'desc' },
-    take: 5,
   });
 
   const total = complaints.length;
@@ -19,7 +23,7 @@ export default async function DashboardPage() {
   const resolved = complaints.filter(c => c.status === 'RESOLVED').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
+    <div className="max-w-7xl mx-auto px-6 py-8">
       <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
       <p className="text-gray-600 mb-8">Welcome back, {user.name}!</p>
 
@@ -66,15 +70,17 @@ export default async function DashboardPage() {
         <div>
           <h2 className="font-semibold mb-4">Recent Activity</h2>
           {complaints.length === 0 ? (
-            <p className="text-gray-400">No complaints yet. Start reporting issues!</p>
+            <p className="text-gray-400">No complaints yet.</p>
           ) : (
-            complaints.map((c) => (
+            complaints.map(c => (
               <div key={c.id} className="bg-white p-4 rounded-2xl mb-3 flex justify-between items-center">
                 <div>
                   <p className="font-medium">{c.title}</p>
-                  <p className="text-xs text-gray-500">{c.status}</p>
+                  <p className="text-xs text-gray-400">by {c.user.name} • {c.status}</p>
                 </div>
-                <span className="text-xs bg-gray-100 px-4 py-1 rounded-2xl">{new Date(c.createdAt).toLocaleDateString()}</span>
+                <span className="text-xs bg-gray-100 px-3 py-1 rounded-xl">
+                  {new Date(c.createdAt).toLocaleDateString()}
+                </span>
               </div>
             ))
           )}

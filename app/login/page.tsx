@@ -1,5 +1,5 @@
 'use client';
-import { loginAction } from '@/lib/actions'
+import { loginAction } from '@/lib/actions';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -11,6 +11,7 @@ export default function LoginPage() {
     try {
       await loginAction(formData);
       router.push('/dashboard');
+      router.refresh();
     } catch (err: any) {
       setError(err.message);
     }
@@ -22,11 +23,11 @@ export default function LoginPage() {
         <h1 className="text-3xl font-bold text-center mb-8">Login to CleanStreet</h1>
         <form action={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm mb-1">Email</label>
+            <label className="block text-sm mb-2">Email</label>
             <input name="email" type="email" required className="w-full px-4 py-3 border rounded-2xl focus:outline-none focus:border-blue-500" />
           </div>
           <div>
-            <label className="block text-sm mb-1">Password</label>
+            <label className="block text-sm mb-2">Password</label>
             <input name="password" type="password" required className="w-full px-4 py-3 border rounded-2xl focus:outline-none focus:border-blue-500" />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}

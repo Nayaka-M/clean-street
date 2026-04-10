@@ -1,5 +1,5 @@
 'use client';
-import { logoutAction } from '@/lib/actions'
+import { logoutAction } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
 export default function LogoutButton() {
@@ -12,7 +12,7 @@ export default function LogoutButton() {
   };
 
   return (
-    <button
+    <button 
       onClick={handleLogout}
       className="text-red-600 hover:text-red-700 font-medium text-sm"
     >
